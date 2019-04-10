@@ -68,7 +68,7 @@ public class BuildNotifierManager {
      * Adds an influx DB notifier
      *
      * @param influxDbNotifierConfig influx db notification configuration
-     * @return
+     * @return The notifier object
      */
     public BuildNotifier addInfluxDbNotifier(InfluxDbNotifierConfig influxDbNotifierConfig) {
         InfluxDbNotifier buildNotifier = new InfluxDbNotifier(influxDbNotifierConfig);
@@ -83,7 +83,7 @@ public class BuildNotifierManager {
     /**
      * Adds an Statsd notifier
      *
-     * @param statsDNotifierConfig Statsd notification configuration
+     * @param statsdNotifierConfig Statsd notification configuration
      * @return the notifier object configured for Statsd
      */
     public BuildNotifier addStatsdNotifier(StatsdNotifierConfig statsdNotifierConfig) {
@@ -122,7 +122,7 @@ public class BuildNotifierManager {
      * Send overall build status notification
      *
      * @param buildState the build status
-     * @param buildDuration time build ran for
+     * @param buildDuration how long it took the build to finish
      * @param blockedDuration time build was blocked before running
      */
     public void notifyFinalBuildStatus(BuildState buildState, long buildDuration, long blockedDuration) {
