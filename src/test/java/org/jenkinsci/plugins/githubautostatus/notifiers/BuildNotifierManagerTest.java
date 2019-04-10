@@ -46,6 +46,8 @@ public class BuildNotifierManagerTest {
     @Mock
     private InfluxDbNotifierConfig influxDbNotificationConfig;
     @Mock
+    private StatsdNotifierConfig statsdNotificationConfig;
+    @Mock
     private GHRepository repo;
     private BuildNotifierManager instance;
     private final String mockJobName = "mock-jobname";
@@ -98,6 +100,16 @@ public class BuildNotifierManagerTest {
     public void testAddInfluxDbNofifierDisabled() {
         when(influxDbNotificationConfig.getInfluxDbUrlString()).thenReturn("");
         BuildNotifier result = instance.addInfluxDbNotifier(influxDbNotificationConfig);
+        assertNull(result);
+    }
+
+    /**
+     * Verifies Statsd notifier is not added when disabled.
+     */
+    @Test
+    public void testAddStatsdNofifierDisabled() {
+        when(statsdNotificationConfig.getStatsdURL()).thenReturn("");
+        BuildNotifier result = instance.addStatsdNotifier(statsdNotificationConfig);
         assertNull(result);
     }
 
