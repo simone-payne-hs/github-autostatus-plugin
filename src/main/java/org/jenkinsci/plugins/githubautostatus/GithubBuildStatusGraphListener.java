@@ -239,7 +239,7 @@ public class GithubBuildStatusGraphListener implements GraphListener {
                 String branchName = "";
                 GithubNotificationConfig githubConfig = GithubNotificationConfig.fromRun(run, exec.getOwner().getListener());
                 if (githubConfig != null) {
-                    buildStatusAction.addGithubNofifier(githubConfig);
+                    buildStatusAction.addGitHubNotifier(githubConfig);
                     repoOwner = githubConfig.getRepoOwner();
                     repoName = githubConfig.getRepoName();
                     branchName = githubConfig.getBranchName();

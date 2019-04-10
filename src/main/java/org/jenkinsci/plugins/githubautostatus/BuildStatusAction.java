@@ -94,7 +94,7 @@ public class BuildStatusAction extends InvisibleAction {
      *
      * @param config github notifier config
      */
-    public void addGithubNofifier(GithubNotificationConfig config) {
+    public void addGitHubNotifier(GithubNotificationConfig config) {
         if (config != null) {
             sendNotications(buildNotifierManager.addGithubNotifier(config));
         }

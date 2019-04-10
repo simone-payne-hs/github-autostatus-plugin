@@ -25,6 +25,7 @@ package org.jenkinsci.plugins.githubautostatus.notifiers;
 
 import org.jenkinsci.plugins.githubautostatus.GithubNotificationConfig;
 import org.jenkinsci.plugins.githubautostatus.InfluxDbNotifierConfig;
+import org.jenkinsci.plugins.githubautostatus.StatsdNotifierConfig;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
