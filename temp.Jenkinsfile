@@ -15,7 +15,8 @@ pipeline {
         stage('Build') {
             steps {
                 container(name: 'maven', shell: '/bin/bash') {
-                    sh 'sleep 100000'
+                    // We need to move the settings.xml over for it to work.
+                    sh 'mv /home/jenkins/.m2/settings.xml /root/.m2/settings.xml'
                     sh 'mvn install'
                 }
             }
