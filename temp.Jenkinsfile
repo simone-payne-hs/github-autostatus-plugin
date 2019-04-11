@@ -19,5 +19,12 @@ pipeline {
                 }
             }
         }
+        stage('Deploy') {
+            steps {
+                container(name: 'maven', shell: '/bin/bash') {
+                    sh 'mvn deploy'
+                }
+            }
+        }
     }
 }

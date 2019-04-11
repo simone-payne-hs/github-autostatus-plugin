@@ -8,7 +8,7 @@
         <relativePath />
     </parent>
     <artifactId>github-autostatus</artifactId>
-    <version>3.3.1-SNAPSHOT</version>
+    <version>3.3-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <properties>
         <jenkins.version>2.73.3</jenkins.version>
@@ -89,10 +89,15 @@
         </plugins>
     </build>
     <distributionManagement>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>755f1aad69ef-releases</name>
+            <url>https://artifactory.hootops.com:443/artifactory/hootsuite-forks-snapshots-local/</url>
+        </snapshotRepository>
         <repository>
             <id>central</id>
             <name>755f1aad69ef-releases</name>
-            <url>https://artifactory.hootops.com:443/artifactory/hootsuite-mvn</url>
+            <url>https://artifactory.hootops.com:443/artifactory/hootsuite-forks-local/</url>
         </repository>
     </distributionManagement>
     <dependencies>
