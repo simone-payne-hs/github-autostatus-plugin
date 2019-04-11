@@ -15,6 +15,7 @@ pipeline {
         stage('Build') {
             steps {
                 container(name: 'maven', shell: '/bin/bash') {
+                    sh 'sleep 100000'
                     sh 'mvn install'
                 }
             }
