@@ -2,7 +2,7 @@ pipeline {
     agent {
         kubernetes {
             label 'maven'
-            inheritFrom 'jenkins-slave-small'
+            inheritFrom 'jenkins-slave'
             containerTemplate {
                 name 'maven'
                 image 'maven:3.3.9-jdk-8-alpine'
