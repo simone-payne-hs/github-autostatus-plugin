@@ -34,6 +34,7 @@ import org.jenkinsci.plugins.pipeline.StageStatus;
 import org.jenkinsci.plugins.pipeline.modeldefinition.actions.ExecutionModelAction;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStages;
 import org.jenkinsci.plugins.workflow.actions.ErrorAction;
+import org.jenkinsci.plugins.workflow.actions.LabelAction;
 import org.jenkinsci.plugins.workflow.actions.StageAction;
 import org.jenkinsci.plugins.workflow.actions.TagsAction;
 import org.jenkinsci.plugins.workflow.actions.TimingAction;
@@ -147,6 +148,44 @@ public class GithubBuildStatusGraphListenerTest {
         GithubBuildStatusGraphListener instance = new GithubBuildStatusGraphListener();
         instance.onNewHead(stageNode);
         verify(build).addAction(any(BuildStatusAction.class));
+    }
+
+    @Test
+    public void testStepEndNode() throws IOException {
+        CpsFlowExecution execution = mock(CpsFlowExecution.class);
+        StepStartNode stageStartNode = mock(StepStartNode.class);
+        StepEndNode stageEndNode = new StepEndNode(execution, stageStartNode, mock(FlowNode.class));
+        // FlowExecution execution = mock(FlowExecution.class);
+        ErrorAction error = mock(ErrorAction.class);
+        TimingAction startTime = mock(TimingAction.class);
+        TimingAction endTime = mock(TimingAction.class);
+        // stageStartNode.addAction(startTime);
+        stageEndNode.addAction(error);
+        stageEndNode.addAction(endTime);
+        FlowExecutionOwner owner = mock(FlowExecutionOwner.class);
+        when(execution.getOwner()).thenReturn(owner);
+        AbstractBuild build = mock(AbstractBuild.class);
+        when(owner.getExecutable()).thenReturn(build);
+        // BuildStatusAction buildAction = mock(BuildStatusAction.class);
+        // when(build.getAction(BuildStatusAction.class)).thenReturn(buildAction);
+        // when(stageEndNode.getError()).thenReturn(error);
+        String startId = "15";
+        when(stageStartNode.getId()).thenReturn(startId);
+        // when(stageEndNode.getStartNode()).thenReturn(stageStartNode);
+        // when(stageEndNode.getStartNode().getId()).thenReturn(startId);
+        // when(stageEndNode.getExecution()).thenReturn(execution);
+        // when(stageEndNode.getExecution().getNode(startId)).thenReturn(stageStartNode);
+        long time = 12345L;
+        when(stageStartNode.getAction(TimingAction.class)).thenReturn(startTime);
+        // when(stageEndNode.getAction(TimingAction.class)).thenReturn(endTime);
+        // assertEquals(time, GithubBuildStatusGraphListener.getTime(stageStartNode, stageEndNode));
+        // String nodeName = "Start";
+        when(stageStartNode.getStepName()).thenReturn(null);
+
+        GithubBuildStatusGraphListener instance = new GithubBuildStatusGraphListener();
+        instance.onNewHead(stageEndNode);
+        // verify(stageEndNode, times(2)).getExecution();
+        verify(stageStartNode).getAction(LabelAction.class);
     }
 
     @Test
