@@ -24,14 +24,23 @@
 package org.jenkinsci.plugins.githubautostatus;
 
 import hudson.model.AbstractBuild;
+import hudson.model.Action;
+
 import java.io.IOException;
+import java.util.List;
+
+import org.jenkinsci.plugins.githubautostatus.notifiers.BuildState;
+import org.jenkinsci.plugins.pipeline.StageStatus;
 import org.jenkinsci.plugins.pipeline.modeldefinition.actions.ExecutionModelAction;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStages;
 import org.jenkinsci.plugins.workflow.actions.ErrorAction;
 import org.jenkinsci.plugins.workflow.actions.StageAction;
+import org.jenkinsci.plugins.workflow.actions.TagsAction;
+import org.jenkinsci.plugins.workflow.actions.TimingAction;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowExecution;
 import org.jenkinsci.plugins.workflow.cps.nodes.StepAtomNode;
 import org.jenkinsci.plugins.workflow.cps.nodes.StepStartNode;
+import org.jenkinsci.plugins.workflow.cps.nodes.StepEndNode;
 import org.jenkinsci.plugins.workflow.flow.FlowExecution;
 import org.jenkinsci.plugins.workflow.flow.FlowExecutionOwner;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
@@ -41,8 +50,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.verification.VerificationMode;
+
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.powermock.api.mockito.PowerMockito;
@@ -135,6 +149,45 @@ public class GithubBuildStatusGraphListenerTest {
         verify(build).addAction(any(BuildStatusAction.class));
     }
 
+    @Test
+    public void testBuildStateForStageWithError() throws IOException {
+        StepStartNode stageStartNode = mock(StepStartNode.class);
+        ErrorAction error = mock(ErrorAction.class);
+
+        GithubBuildStatusGraphListener instance = new GithubBuildStatusGraphListener();
+        BuildState state = instance.buildStateForStage(stageStartNode, error);
+        assertEquals(BuildState.CompletedError, state);
+    }
+
+    @Test
+    public void testBuildStateForStageWithTag() throws IOException {
+        CpsFlowExecution execution = mock(CpsFlowExecution.class);
+        StepStartNode stageStartNode = mock (StepStartNode.class);
+        StepEndNode stageEndNode = new StepEndNode(execution, stageStartNode, mock(FlowNode.class));
+        TagsAction tag = mock(TagsAction.class);
+        stageEndNode.addAction(tag);
+        when(tag.getTagValue(StageStatus.TAG_NAME)).thenReturn("SKIPPED_FOR_FAILURE");
+
+        GithubBuildStatusGraphListener instance = new GithubBuildStatusGraphListener();
+        BuildState state = instance.buildStateForStage(stageEndNode, null);
+        assertEquals(BuildState.SkippedFailure, state);
+    }
+
+    @Test
+    public void testGetTime() throws IOException {
+        CpsFlowExecution execution = mock(CpsFlowExecution.class);
+        StepStartNode stageStartNode = new StepStartNode(execution, null, mock(FlowNode.class));
+        StepEndNode stageEndNode = new StepEndNode(execution, stageStartNode, mock(FlowNode.class));
+        TimingAction startTime = mock(TimingAction.class);
+        TimingAction endTime = mock(TimingAction.class);
+        stageStartNode.addAction(startTime);
+        stageEndNode.addAction(endTime);
+        when(startTime.getStartTime()).thenReturn(1L);
+        when(endTime.getStartTime()).thenReturn(5L);
+
+        long time = GithubBuildStatusGraphListener.getTime(stageStartNode, stageEndNode);
+        assertEquals(4L, time);
+    }
 //    /**
 //     * Test of getTime method, of class GithubBuildStatusGraphListener.
 //     */
