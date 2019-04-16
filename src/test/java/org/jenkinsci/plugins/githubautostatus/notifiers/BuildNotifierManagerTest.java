@@ -109,8 +109,8 @@ public class BuildNotifierManagerTest {
      */
     @Test
     public void testAddStatsdNofifierDisabled() {
-        when(statsdNotificationConfig.getStatsdURL()).thenReturn("");
-        BuildNotifier result = instance.addStatsdNotifier(statsdNotificationConfig);
+        when(statsdNotificationConfig.getStatsdHost()).thenReturn("");
+        BuildNotifier result = instance.addStatsdBuildNotifier(statsdNotificationConfig);
         assertNull(result);
     }
 

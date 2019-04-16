@@ -75,11 +75,6 @@ public class BuildNotifierManager {
         return addBuildNotifier(buildNotifier);
     }
 
-    public BuildNotifier addStatsdBuildNotifier(StatsdNotifierConfig statsdNotifierConfig) {
-        StatsdNotifier buildNotifier = new StatsdNotifier(statsdNotifierConfig);
-        return addBuildNotifier(buildNotifier);
-    }
-
     /**
      * Adds an Statsd notifier
      *

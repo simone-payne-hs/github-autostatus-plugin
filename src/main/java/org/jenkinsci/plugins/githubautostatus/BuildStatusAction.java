@@ -115,7 +115,7 @@ public class BuildStatusAction extends InvisibleAction {
      * @param statsdNotifierConfig Statsd notifier config
      */
     public void addStatsdNotifier(StatsdNotifierConfig statsdNotifierConfig) {
-        sendNotifications(buildNotifierManager.addStatsdNotifier(statsdNotifierConfig));
+        sendNotifications(buildNotifierManager.addStatsdBuildNotifier(statsdNotifierConfig));
     }
 
     /**
