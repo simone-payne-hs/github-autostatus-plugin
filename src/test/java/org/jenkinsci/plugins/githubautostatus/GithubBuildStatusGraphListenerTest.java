@@ -151,41 +151,45 @@ public class GithubBuildStatusGraphListenerTest {
     }
 
     @Test
-    public void testStepEndNode() throws IOException {
+    public void testStepEndNode() throws Exception {
+        // Mocked objects
         CpsFlowExecution execution = mock(CpsFlowExecution.class);
         StepStartNode stageStartNode = mock(StepStartNode.class);
         StepEndNode stageEndNode = new StepEndNode(execution, stageStartNode, mock(FlowNode.class));
-        // FlowExecution execution = mock(FlowExecution.class);
         ErrorAction error = mock(ErrorAction.class);
+        stageEndNode.addAction(error);
         TimingAction startTime = mock(TimingAction.class);
         TimingAction endTime = mock(TimingAction.class);
-        // stageStartNode.addAction(startTime);
-        stageEndNode.addAction(error);
         stageEndNode.addAction(endTime);
+        BuildStatusAction buildStatus = mock(BuildStatusAction.class);
         FlowExecutionOwner owner = mock(FlowExecutionOwner.class);
-        when(execution.getOwner()).thenReturn(owner);
         AbstractBuild build = mock(AbstractBuild.class);
+
+        // get BuildStatusAction from StepEndNode
+        when(execution.getOwner()).thenReturn(owner);
         when(owner.getExecutable()).thenReturn(build);
-        // BuildStatusAction buildAction = mock(BuildStatusAction.class);
-        // when(build.getAction(BuildStatusAction.class)).thenReturn(buildAction);
-        // when(stageEndNode.getError()).thenReturn(error);
+        when(build.getAction(BuildStatusAction.class)).thenReturn(buildStatus);
+
+        // get StepStartNode from StepEndNode
         String startId = "15";
-        when(stageStartNode.getId()).thenReturn(startId);
         // when(stageEndNode.getStartNode()).thenReturn(stageStartNode);
-        // when(stageEndNode.getStartNode().getId()).thenReturn(startId);
-        // when(stageEndNode.getExecution()).thenReturn(execution);
-        // when(stageEndNode.getExecution().getNode(startId)).thenReturn(stageStartNode);
+        when(stageStartNode.getId()).thenReturn(startId);
+        when(execution.getNode(startId)).thenReturn(stageStartNode);
+
+        // get time from StepStartNode to StepEndNode
         long time = 12345L;
         when(stageStartNode.getAction(TimingAction.class)).thenReturn(startTime);
-        // when(stageEndNode.getAction(TimingAction.class)).thenReturn(endTime);
-        // assertEquals(time, GithubBuildStatusGraphListener.getTime(stageStartNode, stageEndNode));
-        // String nodeName = "Start";
+        when(GithubBuildStatusGraphListener.getTime(stageStartNode, stageEndNode)).thenReturn(time);
+
+        // get LabelAction from StepStartNode
+        when(stageStartNode.getAction(LabelAction.class)).thenReturn(null);
+
+        // get step name of StepStartNode
         when(stageStartNode.getStepName()).thenReturn(null);
 
         GithubBuildStatusGraphListener instance = new GithubBuildStatusGraphListener();
         instance.onNewHead(stageEndNode);
-        // verify(stageEndNode, times(2)).getExecution();
-        verify(stageStartNode).getAction(LabelAction.class);
+        verify(stageStartNode).getStepName();
     }
 
     @Test
