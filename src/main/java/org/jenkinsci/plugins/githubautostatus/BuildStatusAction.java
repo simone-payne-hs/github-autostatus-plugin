@@ -96,7 +96,7 @@ public class BuildStatusAction extends InvisibleAction {
      */
     public void addGitHubNotifier(GithubNotificationConfig config) {
         if (config != null) {
-            sendNotications(buildNotifierManager.addGithubNotifier(config));
+            sendNotifications(buildNotifierManager.addGithubNotifier(config));
         }
     }
 
@@ -106,7 +106,7 @@ public class BuildStatusAction extends InvisibleAction {
      * @param influxDbNotifierConfig influx db notifier config
      */
     public void addInfluxDbNotifier(InfluxDbNotifierConfig influxDbNotifierConfig) {
-        sendNotications(buildNotifierManager.addInfluxDbNotifier(influxDbNotifierConfig));
+        sendNotifications(buildNotifierManager.addInfluxDbNotifier(influxDbNotifierConfig));
     }
 
     /**
@@ -115,7 +115,7 @@ public class BuildStatusAction extends InvisibleAction {
      * @param statsdNotifierConfig Statsd notifier config
      */
     public void addStatsdNotifier(StatsdNotifierConfig statsdNotifierConfig) {
-        sendNotications(buildNotifierManager.addStatsdNotifier(statsdNotifierConfig));
+        sendNotifications(buildNotifierManager.addStatsdNotifier(statsdNotifierConfig));
     }
 
     /**
@@ -123,7 +123,7 @@ public class BuildStatusAction extends InvisibleAction {
      *
      * @param notifier notifier to send to
      */
-    public void sendNotications(BuildNotifier notifier) {
+    public void sendNotifications(BuildNotifier notifier) {
         if (notifier != null && notifier.isEnabled()) {
             this.buildStatuses.forEach((nodeName, buildState)
                     -> notifier.notifyBuildState(jobName, nodeName, buildState));
