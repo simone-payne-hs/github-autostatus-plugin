@@ -86,7 +86,7 @@ public class BuildNotifierManager {
      * @param statsdNotifierConfig Statsd notification configuration
      * @return the notifier object configured for Statsd
      */
-    public BuildNotifier addStatsdNotifier(StatsdNotifierConfig statsdNotifierConfig) {
+    public BuildNotifier addStatsdBuildNotifier(StatsdNotifierConfig statsdNotifierConfig) {
         StatsdNotifier buildNotifier = new StatsdNotifier(statsdNotifierConfig);
         return addBuildNotifier(buildNotifier);
     }
