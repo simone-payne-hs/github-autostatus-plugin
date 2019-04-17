@@ -120,6 +120,7 @@ public class GithubNotificationConfig {
         return GithubNotificationConfig.fromRun(run, listener, new GitHubBuilder());
     }
 
+    private static final Logger LOGGER = Logger.getLogger("jenkins.GithubBuildStatusGraphListener");
     /**
      * Constructs a config object from a Run object and github builder.
      * @param run The build.
@@ -130,19 +131,28 @@ public class GithubNotificationConfig {
      */
     public static @Nullable
     GithubNotificationConfig fromRun(Run<?, ?> run, TaskListener listener, GitHubBuilder githubBuilder) {
+        IOException e = new IOException("your message");
+
         BuildStatusConfig buildStatusConfig = BuildStatusConfig.get();
-        if (buildStatusConfig.getEnableGithub()) {
+        LOGGER.log(Level.WARNING, "buildStatusConfig " + buildStatusConfig, e);
+        LOGGER.log(Level.WARNING, "buildStatusConfig.getEnableGithub() " + buildStatusConfig.getEnableGithub(), e);
+        LOGGER.log(Level.WARNING, "buildStatusConfig.getEnableStatsd() " + buildStatusConfig.getEnableStatsd(), e);
+
+        if (buildStatusConfig.getEnableGithub() || buildStatusConfig.getEnableStatsd()) {
             try {
                 GithubNotificationConfig result = new GithubNotificationConfig();
                 result.githubBuilder = githubBuilder;
                 if (!result.extractCommitSha(run)) {
-                    return null;
+                    LOGGER.log(Level.WARNING, "result.extractCommitSha(run) " + result.extractCommitSha(run), e);
+                    // return null;
                 }
                 if (!result.extractBranchInfo(run)) {
-                    return null;
+                    LOGGER.log(Level.WARNING, "result.extractBranchInfo(run) " + result.extractBranchInfo(run), e);
+                    // return null;
                 }
                 if (!result.extractGHRepositoryInfo(run)) {
-                    return null;
+                    LOGGER.log(Level.WARNING, "result.extractGHRepositoryInfo(run) " + result.extractGHRepositoryInfo(run), e);
+                    // return null;
                 }
                 return result;
             } catch (IOException ex) {

@@ -62,9 +62,12 @@ public class StatsdNotifier implements BuildNotifier {
     /**
      * Returns the statsd including the global prefix up to the branch bucket
      * 
-     * @return string of path up to branch bucket
+     * @return string of path up to branch bucket of format pipeline.<org_name>.<jobName>.branch.<branch>
      */
-    private String getBranchPath() {
+    private String getBranchPath() { 
+        if (config.getRepoOwner() == null) {
+            return String.format("pipeline.%s.branch.%s", config.getRepoName(), config.getBranchName());
+        }
         return String.format("pipeline.%s.%s.branch.%s", config.getRepoOwner(), config.getRepoName(), config.getBranchName());
     }
 
