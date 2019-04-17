@@ -73,7 +73,7 @@ public class StatsdNotifier implements BuildNotifier {
             return String.format("pipeline.%s", config.getRepoOwner());
         }
         //Case for Multibranch Pipelines
-        if (config.getBranchName() == config.getRepoOwner()) {
+        if (config.getBranchName().equals(config.getRepoOwner())) {
             return String.format("pipeline.%s.branch.%s", config.getRepoName(), config.getRepoOwner());
         }
         //Case for Github Organization Pipelines

@@ -139,21 +139,17 @@ public class GithubNotificationConfig {
         LOGGER.log(Level.WARNING, "buildStatusConfig.getEnableStatsd() " + buildStatusConfig.getEnableStatsd(), e);
 
         if (buildStatusConfig.getEnableStatsd()) {
-            try {
-                GithubNotificationConfig result = new GithubNotificationConfig();
-                result.githubBuilder = githubBuilder;
-                if (!result.extractCommitSha(run)) {
-                    LOGGER.log(Level.WARNING, "result.extractCommitSha(run) " + result.extractCommitSha(run), e);
-                    return null;
-                }
-                if (!result.extractBranchInfo(run)) {
-                    LOGGER.log(Level.WARNING, "result.extractBranchInfo(run) " + result.extractBranchInfo(run), e);
-                    return null;
-                }
-                return result;
-            } catch (IOException ex) {
-                log(Level.SEVERE, ex);
+            GithubNotificationConfig result = new GithubNotificationConfig();
+            result.githubBuilder = githubBuilder;
+            if (!result.extractCommitSha(run)) {
+                LOGGER.log(Level.WARNING, "result.extractCommitSha(run) " + result.extractCommitSha(run), e);
+                return null;
             }
+            if (!result.extractBranchInfo(run)) {
+                LOGGER.log(Level.WARNING, "result.extractBranchInfo(run) " + result.extractBranchInfo(run), e);
+                return null;
+            }
+            return result;
         }
 
         else if (buildStatusConfig.getEnableGithub()) {

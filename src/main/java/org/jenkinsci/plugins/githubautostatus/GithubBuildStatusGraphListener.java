@@ -246,6 +246,7 @@ public class GithubBuildStatusGraphListener implements GraphListener {
                     repoOwner = githubConfig.getRepoOwner();
                     repoName = githubConfig.getRepoName();
                     branchName = githubConfig.getBranchName();
+                    BuildStatusConfig buildStatusConfig = BuildStatusConfig.get();
                     if (buildStatusConfig.getEnableStatsd()) {
                         repoName = run.getParent().getDisplayName(); 
                         repoOwner = run.getParent().getParent().getFullName(); 
