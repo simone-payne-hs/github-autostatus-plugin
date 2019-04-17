@@ -65,9 +65,18 @@ public class StatsdNotifier implements BuildNotifier {
      * @return string of path up to branch bucket of format pipeline.<org_name>.<jobName>.branch.<branch>
      */
     private String getBranchPath() { 
-        if (config.getRepoOwner() == null) {
-            return String.format("pipeline.%s.branch.%s", config.getRepoName(), config.getBranchName());
+        //repoName returns as jenkins job name (tst la) on multibranch / empty on pipeline
+        //repoOwner returns as branch name (master) on multibranch / job name (simone-test) on pipeline
+
+        //Case for Pipelines
+        if (config.getRepoName() == null) {
+            return String.format("pipeline.%s", config.getRepoOwner());
         }
+        //Case for Multibranch Pipelines
+        if (config.getBranchName() == config.getRepoOwner()) {
+            return String.format("pipeline.%s.branch.%s", config.getRepoName(), config.getRepoOwner());
+        }
+        //Case for Github Organization Pipelines
         return String.format("pipeline.%s.%s.branch.%s", config.getRepoOwner(), config.getRepoName(), config.getBranchName());
     }
 
