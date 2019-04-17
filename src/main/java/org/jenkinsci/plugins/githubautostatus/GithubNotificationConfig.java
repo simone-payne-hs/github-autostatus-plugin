@@ -138,21 +138,39 @@ public class GithubNotificationConfig {
         LOGGER.log(Level.WARNING, "buildStatusConfig.getEnableGithub() " + buildStatusConfig.getEnableGithub(), e);
         LOGGER.log(Level.WARNING, "buildStatusConfig.getEnableStatsd() " + buildStatusConfig.getEnableStatsd(), e);
 
-        if (buildStatusConfig.getEnableGithub() || buildStatusConfig.getEnableStatsd()) {
+        if (buildStatusConfig.getEnableStatsd()) {
             try {
                 GithubNotificationConfig result = new GithubNotificationConfig();
                 result.githubBuilder = githubBuilder;
                 if (!result.extractCommitSha(run)) {
                     LOGGER.log(Level.WARNING, "result.extractCommitSha(run) " + result.extractCommitSha(run), e);
-                    // return null;
+                    return null;
                 }
                 if (!result.extractBranchInfo(run)) {
                     LOGGER.log(Level.WARNING, "result.extractBranchInfo(run) " + result.extractBranchInfo(run), e);
-                    // return null;
+                    return null;
+                }
+                return result;
+            } catch (IOException ex) {
+                log(Level.SEVERE, ex);
+            }
+        }
+
+        else if (buildStatusConfig.getEnableGithub()) {
+            try {
+                GithubNotificationConfig result = new GithubNotificationConfig();
+                result.githubBuilder = githubBuilder;
+                if (!result.extractCommitSha(run)) {
+                    LOGGER.log(Level.WARNING, "result.extractCommitSha(run) " + result.extractCommitSha(run), e);
+                    return null;
+                }
+                if (!result.extractBranchInfo(run)) {
+                    LOGGER.log(Level.WARNING, "result.extractBranchInfo(run) " + result.extractBranchInfo(run), e);
+                    return null;
                 }
                 if (!result.extractGHRepositoryInfo(run)) {
                     LOGGER.log(Level.WARNING, "result.extractGHRepositoryInfo(run) " + result.extractGHRepositoryInfo(run), e);
-                    // return null;
+                    return null;
                 }
                 return result;
             } catch (IOException ex) {

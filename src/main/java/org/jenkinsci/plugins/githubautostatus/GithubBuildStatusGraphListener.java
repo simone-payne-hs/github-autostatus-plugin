@@ -246,6 +246,10 @@ public class GithubBuildStatusGraphListener implements GraphListener {
                     repoOwner = githubConfig.getRepoOwner();
                     repoName = githubConfig.getRepoName();
                     branchName = githubConfig.getBranchName();
+                    if (buildStatusConfig.getEnableStatsd()) {
+                        repoName = run.getParent().getDisplayName(); 
+                        repoOwner = run.getParent().getParent().getFullName(); 
+                    }
                     // want to return org or folder
                     LOGGER.log(Level.WARNING, " THE DATA FOR REPO OWNER 2 "+githubConfig.getRepoOwner()+" to "+githubConfig.getRepoOwner(), e);
                     // job name or repo name
