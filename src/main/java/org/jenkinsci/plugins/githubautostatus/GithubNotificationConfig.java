@@ -120,7 +120,6 @@ public class GithubNotificationConfig {
         return GithubNotificationConfig.fromRun(run, listener, new GitHubBuilder());
     }
 
-    private static final Logger LOGGER = Logger.getLogger("jenkins.GithubBuildStatusGraphListener");
     /**
      * Constructs a config object from a Run object and github builder.
      * @param run The build.
@@ -131,41 +130,18 @@ public class GithubNotificationConfig {
      */
     public static @Nullable
     GithubNotificationConfig fromRun(Run<?, ?> run, TaskListener listener, GitHubBuilder githubBuilder) {
-        IOException e = new IOException("your message");
-
         BuildStatusConfig buildStatusConfig = BuildStatusConfig.get();
-        LOGGER.log(Level.WARNING, "buildStatusConfig " + buildStatusConfig, e);
-        LOGGER.log(Level.WARNING, "buildStatusConfig.getEnableGithub() " + buildStatusConfig.getEnableGithub(), e);
-        LOGGER.log(Level.WARNING, "buildStatusConfig.getEnableStatsd() " + buildStatusConfig.getEnableStatsd(), e);
-
-        if (buildStatusConfig.getEnableStatsd()) {
-            GithubNotificationConfig result = new GithubNotificationConfig();
-            result.githubBuilder = githubBuilder;
-            if (!result.extractCommitSha(run)) {
-                LOGGER.log(Level.WARNING, "result.extractCommitSha(run) " + result.extractCommitSha(run), e);
-                return null;
-            }
-            if (!result.extractBranchInfo(run)) {
-                LOGGER.log(Level.WARNING, "result.extractBranchInfo(run) " + result.extractBranchInfo(run), e);
-                return null;
-            }
-            return result;
-        }
-
-        else if (buildStatusConfig.getEnableGithub()) {
+        if (buildStatusConfig.getEnableGithub()) {
             try {
                 GithubNotificationConfig result = new GithubNotificationConfig();
                 result.githubBuilder = githubBuilder;
                 if (!result.extractCommitSha(run)) {
-                    LOGGER.log(Level.WARNING, "result.extractCommitSha(run) " + result.extractCommitSha(run), e);
                     return null;
                 }
                 if (!result.extractBranchInfo(run)) {
-                    LOGGER.log(Level.WARNING, "result.extractBranchInfo(run) " + result.extractBranchInfo(run), e);
                     return null;
                 }
                 if (!result.extractGHRepositoryInfo(run)) {
-                    LOGGER.log(Level.WARNING, "result.extractGHRepositoryInfo(run) " + result.extractGHRepositoryInfo(run), e);
                     return null;
                 }
                 return result;

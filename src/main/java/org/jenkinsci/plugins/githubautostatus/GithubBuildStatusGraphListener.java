@@ -51,8 +51,8 @@ import org.jenkinsci.plugins.workflow.cps.nodes.StepAtomNode;
 import org.jenkinsci.plugins.workflow.cps.nodes.StepEndNode;
 import org.jenkinsci.plugins.workflow.cps.nodes.StepStartNode;
 import org.jenkinsci.plugins.workflow.flow.FlowExecution;
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
+
 /**
  * GraphListener implementation which provides status (pending, error or success) 
  * and timing information for each stage in a build.
@@ -191,8 +191,6 @@ public class GithubBuildStatusGraphListener implements GraphListener {
                 || (node.getAction(LabelAction.class) != null && node.getAction(ThreadNameAction.class) == null));
     }
 
-    private static final Logger LOGGER = Logger.getLogger("jenkins.GithubBuildStatusGraphListener");
-
     /**
      * Checks whether the current build meets our requirements for providing
      * status, and adds a BuildStatusAction to the build if so.
@@ -240,7 +238,6 @@ public class GithubBuildStatusGraphListener implements GraphListener {
                 String repoName = "";
                 String branchName = "";
                 GithubNotificationConfig githubConfig = GithubNotificationConfig.fromRun(run, exec.getOwner().getListener());
-
                 if (githubConfig != null) {
                     buildStatusAction.addGithubNofifier(githubConfig);
                     repoOwner = githubConfig.getRepoOwner();
@@ -248,8 +245,8 @@ public class GithubBuildStatusGraphListener implements GraphListener {
                     branchName = githubConfig.getBranchName();
                 } else {
                     if (run instanceof WorkflowRun) {
-                        repoName = run.getParent().getDisplayName(); 
-                        repoOwner = run.getParent().getParent().getFullName(); 
+                        repoName = run.getParent().getDisplayName();
+                        repoOwner = run.getParent().getParent().getFullName();
                     }
                 }
                 buildStatusAction.addInfluxDbNotifier(

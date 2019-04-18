@@ -36,9 +36,9 @@ public class StatsdNotifierConfig {
     private String statsdMaxSize;
 
     /**
-     * Gets the statsDBucket.
+     * Gets the full folder path of a jenkins job.
      *
-     * @return statsDBucket.
+     * @return full folder path of jenkins job.
      */
     public String getJobFolderPath() {
         return jobFolderPath;
