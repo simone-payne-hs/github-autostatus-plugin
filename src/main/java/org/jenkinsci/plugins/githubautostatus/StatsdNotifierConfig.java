@@ -29,39 +29,19 @@ package org.jenkinsci.plugins.githubautostatus;
  */
 public class StatsdNotifierConfig {
 
-    private String repoOwner;
-    private String repoName;
-    private String branchName;
+    private String jobFolderPath;
     private String statsdHost;
     private String statsdPort;
     private String statsdBucket;
     private String statsdMaxSize;
 
     /**
-     * Gets the repo owner.
+     * Gets the statsDBucket.
      *
-     * @return repo owner.
+     * @return statsDBucket.
      */
-    public String getRepoOwner() {
-        return repoOwner;
-    }
-
-    /**
-     * Gets the repo name.
-     *
-     * @return repo name.
-     */
-    public String getRepoName() {
-        return repoName;
-    }
-
-    /**
-     * Gets the branch name.
-     *
-     * @return branch name.
-     */
-    public String getBranchName() {
-        return branchName;
+    public String getJobFolderPath() {
+        return jobFolderPath;
     }
 
     /**
@@ -103,21 +83,19 @@ public class StatsdNotifierConfig {
     /**
      * Creates an statsd notification config based on the global settings.
      *
-     * @param repoOwner repo owner.
-     * @param repoName repo name.
-     * @param branchName branch name.
+     * @param fullJobPath full folder and job path of jenkins job
      * @return config.
      */
-    public static StatsdNotifierConfig fromGlobalConfig(String repoOwner, String repoName, String branchName) {
+    public static StatsdNotifierConfig fromGlobalConfig(String fullJobPath) {
         BuildStatusConfig config = BuildStatusConfig.get();
 
         StatsdNotifierConfig statsdNotifierConfig = new StatsdNotifierConfig();
 
-        if (config.getEnableStatsd()) {
-            statsdNotifierConfig.repoOwner = repoOwner;
-            statsdNotifierConfig.repoName = repoName;
-            statsdNotifierConfig.branchName = branchName;
+        String jobFolderPath = fullJobPath;//sanitize function
 
+        if (config.getEnableStatsd()) {
+            statsdNotifierConfig.jobFolderPath = jobFolderPath;
+            
             statsdNotifierConfig.statsdHost = config.getStatsdHost();
             statsdNotifierConfig.statsdPort = config.getStatsdPort();
             statsdNotifierConfig.statsdBucket = config.getStatsdBucket();

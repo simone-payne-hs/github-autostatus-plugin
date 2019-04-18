@@ -51,8 +51,8 @@ import org.jenkinsci.plugins.workflow.cps.nodes.StepAtomNode;
 import org.jenkinsci.plugins.workflow.cps.nodes.StepEndNode;
 import org.jenkinsci.plugins.workflow.cps.nodes.StepStartNode;
 import org.jenkinsci.plugins.workflow.flow.FlowExecution;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
-
 /**
  * GraphListener implementation which provides status (pending, error or success) 
  * and timing information for each stage in a build.
@@ -239,38 +239,23 @@ public class GithubBuildStatusGraphListener implements GraphListener {
                 String repoOwner = "";
                 String repoName = "";
                 String branchName = "";
-                IOException e = new IOException("your message");
                 GithubNotificationConfig githubConfig = GithubNotificationConfig.fromRun(run, exec.getOwner().getListener());
+
                 if (githubConfig != null) {
                     buildStatusAction.addGithubNofifier(githubConfig);
                     repoOwner = githubConfig.getRepoOwner();
                     repoName = githubConfig.getRepoName();
                     branchName = githubConfig.getBranchName();
-                    BuildStatusConfig buildStatusConfig = BuildStatusConfig.get();
-                    if (buildStatusConfig.getEnableStatsd()) {
-                        repoName = run.getParent().getDisplayName(); 
-                        repoOwner = run.getParent().getParent().getFullName(); 
-                    }
-                    // want to return org or folder
-                    LOGGER.log(Level.WARNING, " THE DATA FOR REPO OWNER 2 "+githubConfig.getRepoOwner()+" to "+githubConfig.getRepoOwner(), e);
-                    // job name or repo name
-                    LOGGER.log(Level.WARNING, " THE DATA FOR REPO NAME 2 "+githubConfig.getRepoName()+" to "+githubConfig.getRepoName(), e);
-                    // branch name or nothing if pipeline (also take out .branch.<branch name>)
-                    LOGGER.log(Level.WARNING, " THE DATA FOR BRANCH NAME 2 "+githubConfig.getBranchName()+" to "+githubConfig.getBranchName(), e);
                 } else {
                     if (run instanceof WorkflowRun) {
-                        //returns as jenkins job name (tst la) on multibranch / empty on pipeline
                         repoName = run.getParent().getDisplayName(); 
-                        //returns as branch name (master) on multibranch / job name (simone-test) on pipeline
                         repoOwner = run.getParent().getParent().getFullName(); 
-                        // LOGGER.log(Level.WARNING, " THE DATA FIR ODSLKFJ SLDKFJLKDS F REPO OWNER 3 "+repoOwner+" to "+repoOwner, e);
-                        // LOGGER.log(Level.WARNING, " THE DATA FIR ODSLKFJ SLDKFJLKDS F REPO NAME 3 "+repoName+" to "+repoName, e);
                     }
                 }
                 buildStatusAction.addInfluxDbNotifier(
                         InfluxDbNotifierConfig.fromGlobalConfig(repoOwner, repoName, branchName));
                 buildStatusAction.addStatsdNotifier(
-                        StatsdNotifierConfig.fromGlobalConfig(repoOwner, repoName, branchName));
+                        StatsdNotifierConfig.fromGlobalConfig(run.getExternalizableId()));
                 run.addAction(buildStatusAction);
             } else {
                 buildStatusAction.addBuildStatus(flowNode.getDisplayName());
