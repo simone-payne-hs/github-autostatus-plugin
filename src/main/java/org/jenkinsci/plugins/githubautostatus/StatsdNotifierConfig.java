@@ -22,6 +22,8 @@
  * THE SOFTWARE.
  */
 package org.jenkinsci.plugins.githubautostatus;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class for StatsD configuration notifier.
@@ -81,6 +83,63 @@ public class StatsdNotifierConfig {
     }
 
     /**
+     * Returns the statsd including the global prefix up to the branch bucket
+     * 
+     * @param fullJobPath full folder and job path of jenkins job
+     * @return string of path up to branch bucket
+     */
+    public String getBranchPath(String fullJobPath) {
+        String sanitizedFolderPath = sanitizeAll(fullJobPath);
+        return String.format("pipeline.%s", sanitizedFolderPath);
+    }
+
+        /**
+     * Applies all sanitizations to a key, folders are expanded into seperate statsd buckets.
+     * It firest applies bucket sanitization (removing periods to prevent them being interprested as 
+     * seperate buckets). It the applies the statsd bucket key sanitization.
+     * 
+     * @param key key to sanitize
+     * @return sanitized key
+     */
+    public String sanitizeAll(String key) {
+        return collapseEmptyBuckets(statsdSanitizeKey(sanitizeKey(key)));
+    }
+
+     /**
+     * Does the same sanitization as Statsd would do if sanitization is on.
+     * See: https://github.com/statsd/statsd/blob/master/stats.js#L168
+     * 
+     * @param key key to sanitize
+     * @return santized key
+     */
+    private String statsdSanitizeKey(String key) {
+        return key.replaceAll("\\s+", "_").replaceAll("/", ".").replaceAll("[^a-zA-Z_\\-0-9\\.]", "");
+    }
+
+    /**
+     * Collapses empty buckets into a single period.
+     * 
+     * @param key key to sanitize
+     * @return sanitized key
+     */
+    private String collapseEmptyBuckets(String key) {
+        return key.replaceAll("\\.{2,}", ".");
+    }
+
+    /**
+     * Does Jenkins specific key sanitization.
+     * 
+     * @param key key to sanitize
+     * @return sanitized key
+     */
+    private String sanitizeKey(String key) {
+        return key.replaceAll("\\.", "");
+    }
+
+    private static final Logger LOGGER = Logger.getLogger("jenkins.StatsdNotifierConfig");
+
+
+    /**
      * Creates an statsd notification config based on the global settings.
      *
      * @param fullJobPath full folder and job path of jenkins job
@@ -91,7 +150,10 @@ public class StatsdNotifierConfig {
 
         StatsdNotifierConfig statsdNotifierConfig = new StatsdNotifierConfig();
 
-        String jobFolderPath = fullJobPath;//sanitize function
+        String jobFolderPath = statsdNotifierConfig.getBranchPath(fullJobPath);//sanitize function
+
+        // Can't seem to print this log out into Jenkins console output
+        LOGGER.log(Level.INFO, " The sanitized jobFolderPath is = " + jobFolderPath);
 
         if (config.getEnableStatsd()) {
             statsdNotifierConfig.jobFolderPath = jobFolderPath;
